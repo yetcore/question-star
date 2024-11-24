@@ -1,6 +1,9 @@
 import React, { FC, useState } from "react";
-import styles from './List.module.scss'
+import styles from './Common.module.scss'
 import QuestionCard from "../../components/QuestionCard";
+import { Typography } from "antd";
+
+
 const rawQuestionList = [
     {
         _id:'q1',
@@ -35,17 +38,19 @@ const rawQuestionList = [
         createAt: '2月29日 14.32'
     }
 ]
+const { Title } = Typography
 const List: FC = () => {
     const [questionList, setQuestionList] = useState(rawQuestionList)
     return <>
     <div className={styles.header}>
         <div className={styles.left}>
-            <h3>我的问卷</h3>
+            <Title level={3}>我的问卷</Title>
         </div>
-        <div className={styles.right}></div>
+        <div className={styles.right}>搜索</div>
     </div>
     <div className={styles.content}>
-        {questionList.map(q => {
+        {questionList.length > 0 && 
+        questionList.map(q => {
             const { _id } = q
             return <QuestionCard key={_id} {...q}></QuestionCard>
         })}
