@@ -6,6 +6,7 @@ import { title } from "process";
 import { render } from "@testing-library/react";
 import { useTitle } from "ahooks";
 import { ExclamationOutlined } from "@ant-design/icons";
+import ListSearch from "../../components/ListSearch";
 
 const { confirm } = Modal
 const rawQuestionList = [
@@ -109,7 +110,9 @@ const Trash: FC = () => {
                 <div className={styles.left}>
                     <Title level={3}>回收站</Title>
                 </div>
-                <div className={styles.right}>搜索</div>
+                <div className={styles.right}>
+                    <ListSearch />
+                </div>
             </div>
             <div className={styles.content}>
                 {questionList.length === 0 && <Empty description='暂无数据'/>}
