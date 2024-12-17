@@ -7,42 +7,45 @@ import { render } from "@testing-library/react";
 import { useTitle } from "ahooks";
 import { ExclamationOutlined } from "@ant-design/icons";
 import ListSearch from "../../components/ListSearch";
+import useLoadQuestionListData from "../../hooks/useLoadQuestionListData";
+import {Spin} from "antd";
+import ListPage from "../../components/ListPage";
 
 const { confirm } = Modal
-const rawQuestionList = [
-    {
-        _id:'q1',
-        title:'问卷1',
-        isPublished: false,
-        isStar: true,
-        answerCount: 5,
-        createAt: '2月29日 14.32'
-    },
-    {
-        _id:'q2',
-        title:'问卷2',
-        isPublished: false,
-        isStar: true,
-        answerCount: 5,
-        createAt: '2月29日 14.32'
-    },
-    {
-        _id:'q3',
-        title:'问卷3',
-        isPublished: true,
-        isStar: true,
-        answerCount: 5,
-        createAt: '2月29日 14.32'
-    },
-    {
-        _id:'q4',
-        title:'问卷4',
-        isPublished: false,
-        isStar: true,
-        answerCount: 5,
-        createAt: '2月29日 14.32'
-    }
-]
+// const rawQuestionList = [
+//     {
+//         _id:'q1',
+//         title:'问卷1',
+//         isPublished: false,
+//         isStar: true,
+//         answerCount: 5,
+//         createAt: '2月29日 14.32'
+//     },
+//     {
+//         _id:'q2',
+//         title:'问卷2',
+//         isPublished: false,
+//         isStar: true,
+//         answerCount: 5,
+//         createAt: '2月29日 14.32'
+//     },
+//     {
+//         _id:'q3',
+//         title:'问卷3',
+//         isPublished: true,
+//         isStar: true,
+//         answerCount: 5,
+//         createAt: '2月29日 14.32'
+//     },
+//     {
+//         _id:'q4',
+//         title:'问卷4',
+//         isPublished: false,
+//         isStar: true,
+//         answerCount: 5,
+//         createAt: '2月29日 14.32'
+//     }
+// ]
 const tableColumns = [
     {
         title:'标题',
@@ -74,8 +77,10 @@ const tableColumns = [
 const { Title } = Typography
 const Trash: FC = () => {
     useTitle('yetcore问卷 -- 回收站')
-    const [questionList, setQuestionList] = useState(rawQuestionList)
+    // const [questionList, setQuestionList] = useState(rawQuestionList)
     const [selectedIds,setSelectedIds] = useState<string[]>([])//记录ID
+    const { data = {}, loading } = useLoadQuestionListData({isDeleted: true})
+    const { list = [], total = 0 } = data
     function del() {
         confirm({
             title:'确定彻底删除该问卷',
@@ -92,10 +97,10 @@ const Trash: FC = () => {
             </Space>
         </div>
         <Table 
-                dataSource={questionList} 
+                dataSource={list} 
                 columns={tableColumns} 
                 pagination={false} 
-                rowKey={q => q._id}
+                rowKey={(q:any) => q._id}
                 rowSelection={{
                     type:'checkbox',
                     onChange: selectedRowKeys => {
@@ -115,11 +120,12 @@ const Trash: FC = () => {
                 </div>
             </div>
             <div className={styles.content}>
-                {questionList.length === 0 && <Empty description='暂无数据'/>}
-                {questionList.length > 0 && TableElem}
+                {loading && <div style={{ textAlign:'center'}}><Spin></Spin></div>}
+                {!loading && list.length === 0 && <Empty description='暂无数据'/>}
+                {list.length > 0 && TableElem}
             </div>
             <div className={styles.footer}>
-
+                <ListPage total={total}></ListPage>
             </div>
         </>
     )
