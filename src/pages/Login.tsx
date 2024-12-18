@@ -3,9 +3,13 @@ import styles from './Login.module.scss'
 import { Space,Typography,Form,Input,Button, Checkbox, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { UserAddOutlined } from "@ant-design/icons";
-import { REGISATER_PATHNAME } from "../router";
+import { MANAGE_INDEX_PATHNAME, REGISATER_PATHNAME } from "../router";
 import { paste } from "@testing-library/user-event/dist/paste";
 import Password from "antd/es/input/Password";
+import { useRequest } from "ahooks";
+import { loginService } from "../services/user";
+import { log } from "console";
+import { setToken } from "../utils/userToken";
 
 const USERNAME_KEY = 'USERNAME'
 const PASSWORD_KEY = 'PASSWORD'
@@ -31,6 +35,21 @@ const Login: FC = () => {
     const { Title } = Typography
     const [form] = Form.useForm()
 
+    //login
+    const { run:login } = useRequest(async (username: string, password: string) => {
+        const data = await loginService(username, password)
+        return data
+    },{
+        manual:true,
+        onSuccess(result) {
+            const {token = ''} = result
+            setToken(token)
+            message.success('登录成功')
+            nav(MANAGE_INDEX_PATHNAME)
+        }
+    })
+
+    //
     useEffect(() => {
         const {username,password } = getUserInfoFormStorage()
         form.setFieldsValue({ username,password})
@@ -38,6 +57,7 @@ const Login: FC = () => {
 
     const onFinish = (value:any) => {
         const {username,password,remember} = value || {}
+        login(username,password)
         if(remember){
             rememberUser(username,password)
         }else{
@@ -45,6 +65,7 @@ const Login: FC = () => {
         }
     }
 
+    
     return (
         <div className={styles.container}>
             <div>
