@@ -29,3 +29,23 @@ export async function  getQuestionListService(opt:Partial<SearchOption> = {}): P
     return data
     
 }
+
+//更新问卷
+export async function updateQuestionService(id: string,opt: {[key: string] :any}):Promise<ResDataType> {
+    const url = `http://localhost:3001/api/question/${id} `
+    const data = (await axios.patch(url,opt)) as ResDataType
+    return data
+}
+
+//复制问卷
+export async function duplicateQuestionService(id: string) {
+    const url = `http://localhost:3001/api/question/duplicate/${id}`
+    const data = (await axios.post(url)) as ResDataType
+    return data
+}
+
+export async function deleteQuestionService(ids: string[]):Promise<ResDataType>{
+    const url = 'http://localhost:3001/api/question'
+    const data = (await axios.delete(url,{ data: { ids }})) as ResDataType
+    return data
+}
