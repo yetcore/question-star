@@ -1,10 +1,10 @@
 import React,{ FC } from "react";
 import useLoadQuestionData from "../../../hooks/useLoadQuestionData";
 const Stat: FC = () => {
-    const { loading,data } = useLoadQuestionData()
+    // const { loadin } = useLoadQuestionData()
     return <div>
     <p>Stat page</p>
-    {loading ? <p>loading</p> : <p>{JSON.stringify(data)}</p>}
+    {/* {loading ? <p>loading</p> : <p>{JSON.stringify(data)}</p>} */}
 </div>
 }
 export default Stat
