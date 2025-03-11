@@ -1,7 +1,7 @@
 export type QuestionInputPropsType = {
     title?: string,
     placeholder?: string
-
+    disabled?: boolean
     onchange?: (newProps: QuestionInputPropsType) => void
 }
 

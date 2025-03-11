@@ -5,6 +5,7 @@ import { useRequest } from "ahooks";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { resetComponents } from "../store/componentsReducer";
+import { resetPageInfo } from "../store/pageinfoReducer";
 
 
 function useLoadQuestionData() {
@@ -25,13 +26,15 @@ function useLoadQuestionData() {
     //根据获取的 data 设置redux store
     useEffect(() => {
         if(!data) return
-        const { title = '' , componentList = []} = data
+        const { title = '' , componentList = [], js = '', css = '', isPublished = false, desc = '' } = data
 
         let selectedID = ''
         if(componentList.length > 0) selectedID = componentList[0].fe_id
 
         //把 componentList 存储到 Redux store
-        dispatch(resetComponents({ componentList, selectedID }))
+        dispatch(resetComponents({ componentList, selectedID, copiedComponent: null }))
+        //把 pageInfo 存储到 Redux store
+        dispatch(resetPageInfo({ title, desc, js, css, isPublished }))
     },[data])
 
     //判断id变化加载数据

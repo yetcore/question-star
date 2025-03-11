@@ -20,7 +20,7 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     res => {
         const resData = (res.data || {}) as ResType
-        const { errno,data,msg} = resData
+        const { errno,data,msg } = resData
         if(errno !== 0) {
             if(msg){
                 message.error(msg)

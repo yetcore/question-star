@@ -4,10 +4,13 @@ import styles from './EditCanvas.module.scss'
 // import QuestionInput from "../../../components/QuestionComponents/QuestionInput/ComponentInput";
 import { Spin } from "antd";
 import useGetComponentInfo from "../../../hooks/useGetComponentInfo";
-import { changeSelectedId, ComponentInfoType } from "../../../store/componentsReducer";
+import { changeSelectedId, ComponentInfoType, moveComponent } from "../../../store/componentsReducer";
 import { getComponentConfByType } from "../../../components/QuestionComponents";
 import { useDispatch } from "react-redux";
 import classNames from 'classnames'
+import useBindCanvasKeyPress from "../../../hooks/useBindCanvasKeyPress";
+import SortableContainer from "../../../components/DragSortable/SortableContainer";
+import SortableItem from "../../../components/DragSortable/SortableItem";
 
 type PropsType = {
     loading: boolean
@@ -31,30 +34,47 @@ const EditCanvas:FC<PropsType> = ({ loading }) => {
         event.stopPropagation()
     }
 
+    useBindCanvasKeyPress()
+    
     if(loading) {
         return <div style={{ textAlign: 'center', marginTop: '24px' }}>
             <Spin />
         </div>
     }
 
+    //SortableContainer add items id props
+    const componentListWithID = componentList.map(c => {
+        return {...c, id: c.fe_id}
+    })
+
+    //onDragEnd function
+    function handleDragEnd(oldIndex: number, newIndex: number) {
+        dispatch(moveComponent({ oldIndex, newIndex }))
+    }
+
     return (
+     <SortableContainer items={componentListWithID} onDragEnd={handleDragEnd}>  
         <div className={styles.canvas}>
-            {componentList.map(c => {
-                const { fe_id } = c
+            {componentList.filter(c => !c.isHidden).map(c => {
+                const { fe_id, isLocked} = c
 
                 //拼接classname
                 const wrapperDefaultClassName = styles['component-wrapper']
                 const selectedClassName = styles.selected
+                const lockdeClassName = styles.locked
                 const wrapperClassName = classNames({
                     [wrapperDefaultClassName]: true,
-                    [selectedClassName]: selectedID === fe_id 
+                    [selectedClassName]: selectedID === fe_id ,
+                    [lockdeClassName]: isLocked
                 })
                  return (
-                    <div key={fe_id} className={wrapperClassName} onClick={e => handleClick(e, fe_id)}>
+                   <SortableItem key={fe_id} id={fe_id}>  
+                    <div className={wrapperClassName} onClick={e => handleClick(e, fe_id)}>
                         <div className={styles.component}>
                             {getComponent(c)}
                         </div>
                     </div>
+                    </SortableItem>  
                  )
             })}
 
@@ -69,6 +89,7 @@ const EditCanvas:FC<PropsType> = ({ loading }) => {
                 </div>
             </div> */}
         </div>
+      </SortableContainer>
     )
 }
 
